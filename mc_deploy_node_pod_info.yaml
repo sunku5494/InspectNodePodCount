@@ -1,0 +1,34 @@
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  name: collect-worker-node-pod-info
+  labels:
+    machineconfiguration.openshift.io/role: worker
+spec:
+  config:
+    ignition:
+      version: 3.4.0
+    systemd:
+      units:
+        - name: node-pod-info.service
+          enabled: true
+          contents: |
+            [Unit]
+            Description=Node Pod Info Service
+            After=network.target
+
+            [Service]
+            ExecStart=/usr/local/bin/node-pod-info.sh
+            Restart=always
+            RestartSec=10
+
+            [Install]
+            WantedBy=multi-user.target
+    storage:
+      files:
+        - path: /usr/local/bin/node-pod-info.sh
+          mode: 0755
+          overwrite: true
+          contents:
+            source: data:text/plain;charset=utf-8;base64,IyEvYmluL3NoCgojIyMjIyMjIyMjIyMjIyMjCiNEZXNjcmlwdGlvbjoKI1RoaXMgc2NyaXB0IGlzIHRvIHRyb3VibGVzaG9vdCBodHRwczovL2lzc3Vlcy5yZWRoYXQuY29tL2Jyb3dzZS9PQ1BCVUdTLTM1MDcwIHRvIGdhdGhlciB0aGUgcG9kcyBjb3VudCBhdHRhY2hlZAojdG8gY2x1c3RlciBkZWZhdWx0IG5ldHdvcmsgYW5kIGFjdGl2ZWx5IHJ1bm5pbmcgaW4gYSB3b3JrZXIgbm9kZSBmcm9tIHRoZSBjb250cm9sIHBsYW5lLCBhcyB3ZWxsIGFzIHRoZSBwb2RzIElQCiNjb3VudCBpbiB0aGUgU0ROIENOSSBkaXJlY3RvcnkgaW4gYSB3b3JrZXIgbm9kZS4KIwojRXhhbXBsZToKI0xldCdzIHNheSBpZiB0aGUgY2lkciBhc3NpZ25lZCBmb3IgYSBub2RlIGlzIC8yNCBhbmQgd2Ugc2VlIHBvZHMgSVAgY291bnQgbGlzdGVkIGluIFNETiBkaXJlY3RvcnkgaXMgMjU0KHRoaXMgaXMKI3RoZSBtYXggcG9zc2libGUgSVAgY291bnQgd2UgY2FuIHNlZSBmb3IgLzI0KSBhbmQgaWYgdGhlIHBvZHMgY291bnQgYXR0Y2hlZCB0byBjbHVzdGVyIGRlZmF1bHQgbmV0d29yayBpcyBsZXNzCiN0aGFuIHRvIGl0LFRoZW4gd2UgY2FuIHNheSBTRE4gQ05JIGRpcmVjdG9yeSBoYXZlIHNvbWUgc3RhbGUgSVBTIGFuZCBwb3NzaWJseSB0aGV5IGZhaWxlZCB0byBnZXQgcmVtb3ZlZCBmcm9tIHRoCiNlIGRpcmVjdG9yeSB3aGVuIHRoZSBjb3JyZXNwb2RpbmcgcG9kcyBoYXZlIHJlbW92ZWQuVGhpcyB3YXkgd2UgY2FuIHByb3ZlIHRoYXQgU0ROIENOSSBoYXMgc29tZSB1bnVzZWQgSVAgZmlsZXMKI2FuZCB0aGF0IGlzIGNhdXNpbmcgdG8gbm90IGZpbmRpbmcgYW4gSVAgdG8gYWxsb2NhdGUgZnJvbSBhbiBhc3NpZ25lZCBDSURSIHRvIGEgd29ya2VyIG5vZGUgd2hlbiBhIG5ldyBwb2QgaXMgY3IKI2VhdGVkIGluIGl0LgojIyMjIyMjIyMjIyMjIyMjIwoKIyBGdW5jdGlvbiB0byBoYW5kbGUgY2xlYW51cCBvbiB0ZXJtaW5hdGlvbgpjbGVhbnVwKCkgewoJZWNobyAiRVJST1I6IFJlY2VpdmVkIFNJR1RFUk0uIEV4aXRpbmcgZ3JhY2VmdWxseSBhdCAkKGRhdGUgJyslWS0lbS0lZCAlSDolTTolUycpLiIKCWV4aXQgMAp9CgojIFRyYXAgU0lHVEVSTSBhbmQgY2FsbCB0aGUgY2xlYW51cCBmdW5jdGlvbgp0cmFwIGNsZWFudXAgVEVSTQoKd2hpbGUgOjsgZG8KCSNjb2xsZWN0IHRoZSBjb3VudCBvZiBpcHY0IGZpbGVzIGNyZWF0ZWQgdW5kZXIgQ05JX05FVFdPUktfRElSCglDTklfTkVUV09SS19ESVI9Ii92YXIvbGliL2NuaS9uZXR3b3Jrcy9vcGVuc2hpZnQtc2RuIgoJQUxMT0NBVEVEX0lQUz0kKGZpbmQgJENOSV9ORVRXT1JLX0RJUiAtdHlwZSBmIC1yZWdleHR5cGUgcG9zaXgtZXh0ZW5kZWQgLXJlZ2V4ICcuKi8oWzAtOV17MSwzfVwuKXszfVswLTldezEsM30kJyB8IHdjIC1sKQoKCSNjb2xsZWN0IHRoZSBjb3VudCBvZiBwb2RzIG9yIGNvbnRhaW5lcnMgYXR0YWNoZWQgdG8gY2x1c3RlciBkZWZhdWx0IG5ldHdvcmsgY3JlYXRlZCB3aXRoIGluIGEgbm9kZQoJI2ZpbHRlciBvdXQgdGhlIHBvZHMgdGhhdCBkb250IGhhdmUgSXAgYWRkcmVzcyBhc3NpZ25lZAoJUE9EX0NPVU5UPSQob2MgLS1rdWJlY29uZmlnPS92YXIvbGliL2t1YmVsZXQva3ViZWNvbmZpZyBnZXQgcG9kcyAtQSBcCgkJLS1maWVsZC1zZWxlY3RvciBzcGVjLm5vZGVOYW1lPSIkKGhvc3RuYW1lKSIsc3RhdHVzLnBvZElQIT1udWxsLHN0YXR1cy5waGFzZT0iUnVubmluZyIgXAoJCS1vIGpzb24gfCBqcSAnWy5pdGVtc1tdIHwgc2VsZWN0KC5tZXRhZGF0YS5hbm5vdGF0aW9uc1siazhzLnYxLmNuaS5jbmNmLmlvL25ldHdvcmstc3RhdHVzIl0gfCBmcm9tanNvbj8gfCBhbnkoLmRlZmF1bHQpKV0gfCBsZW5ndGgnKQoKCWlmIFsgIiRQT0RfQ09VTlQiIC1sdCAiJEFMTE9DQVRFRF9JUFMiIF07IHRoZW4gI3ZhbGlkYXRlIGlmIGNvdW50IHR5cGVzIGFyZSBzdHJpbmcgb3IgaW50ZWdlcgoJCWVjaG8gIkZBVEFMOiAkKGRhdGUgJyslWS0lbS0lZCAlSDolTTolUycpIC0gUE9EIENPVU5UIGlzIGxlc3MgdGhhbiB0aGUgUE9EIElQcyBBbGxvY2F0ZWQiCgllbGlmIFsgIiRQT0RfQ09VTlQiIC1ndCAiJEFMTE9DQVRFRF9JUFMiIF07IHRoZW4KCQllY2hvICJFUlJPUjogJChkYXRlICcrJVktJW0tJWQgJUg6JU06JVMnKSAtIFBPRCBDT1VOVCBpcyBncmVhdGVyIHRoYW4gdGhlIFBPRCBJUHMgQWxsb2NhdGVkIgoJZWxzZQoJCWVjaG8gIklORk86ICQoZGF0ZSAnKyVZLSVtLSVkICVIOiVNOiVTJykgLSBQT0QgYW5kIFBPRCBJUCBDb3VudCBhcmUgc2FtZSIKCWZpCgllY2hvICJQT0QgQ09VTlQ6ICR7UE9EX0NPVU5UfSBhbmQgUE9ESVBzIENPVU5UOiAke0FMTE9DQVRFRF9JUFN9IgoJc2xlZXAgMzYwMApkb25lCg==
