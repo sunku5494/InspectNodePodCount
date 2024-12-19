@@ -1,5 +1,11 @@
 package main
 
+/*
+Description:
+In an Openshift cluster, this script would loop through a list of worker nodes, check the node-pod-info service logs installed on 
+those nodes for ERROR logs, and output the node name if any ERROR logs were detected.
+*/
+
 import (
 	"bytes"
 	"fmt"
@@ -7,7 +13,7 @@ import (
 	"strings"
 )
 
-// Node represents a Kubernetes node
+// Node represents oc worker node
 type Node struct {
 	Name string
 }
@@ -20,8 +26,8 @@ func main() {
 		return
 	}
 
-	// Inspect logs of a specific service on each node
-	myService := "node-pod-info.service" // Replace with your service name
+	// Inspect logs of node-pod-info service on each node
+	myService := "node-pod-info.service"
 	for _, node := range nodes {
 		errorsFound, err := checkServiceLogsForErrors(node.Name, myService)
 		if err != nil {
@@ -61,14 +67,13 @@ func getAllNodes() ([]Node, error) {
 	return nodes, nil
 }
 
-// checkServiceLogsForErrors checks the logs of a specific service on a node for errors
+// checkServiceLogsForErrors checks the logs of node-pod-info service on a node for ERRORS
 func checkServiceLogsForErrors(nodeName, serviceName string) (bool, error) {
 	var out bytes.Buffer
 
 	// Command to execute on the node
 	remoteCommand := "chroot /host bash -c 'journalctl -u node-pod-info.service --since \"1 hour ago\" --no-pager'"
 
-	// Construct the `oc debug` command
 	cmd := exec.Command("oc", "debug", fmt.Sprintf("node/%s", nodeName), "--", "bash", "-c", remoteCommand)
 	cmd.Stdout = &out
         cmd.Stderr = &out
@@ -78,7 +83,7 @@ func checkServiceLogsForErrors(nodeName, serviceName string) (bool, error) {
 	}
 
 	logs := out.String()
-	if strings.Contains(logs, "FATAL") || strings.Contains(logs, "ERROR") {
+	if strings.Contains(logs, "ERROR") {
 		return true, nil
 	}
 
