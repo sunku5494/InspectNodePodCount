@@ -35,7 +35,7 @@ func main() {
 			continue
 		}
 		if errorsFound {
-			fmt.Printf("Error found in logs on node: %s\n", node.Name)
+			fmt.Printf("ERROR logs are detected for %s\n", node.Name)
 		} else {
 			fmt.Printf("No Errors found in logs on node: %s\n", node.Name)
 		}
@@ -83,6 +83,7 @@ func checkServiceLogsForErrors(nodeName, serviceName string) (bool, error) {
 	}
 
 	logs := out.String()
+	// Searching the logs produced by the node-pod-info script for a log containing the string "ERROR"
 	if strings.Contains(logs, "ERROR") {
 		return true, nil
 	}
