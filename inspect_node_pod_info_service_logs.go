@@ -2,7 +2,7 @@ package main
 
 /*
 Description:
-In an Openshift cluster, this script would loop through a list of worker nodes, check the node-pod-info service logs installed on 
+In an Openshift cluster, this script would loop through a list of nodes, check the node-pod-info service logs installed on 
 those nodes for ERROR logs, and output the node name if any ERROR logs were detected.
 */
 
@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-// Node represents oc worker node
+// Node represents oc node
 type Node struct {
 	Name string
 }
@@ -58,9 +58,7 @@ func getAllNodes() ([]Node, error) {
 	for _, line := range lines {
 		parts := strings.Split(line, "/")
 		if len(parts) == 2 {
-			check :=strings.Contains(parts[1], "worker"); if check {
-				nodes = append(nodes, Node{Name: parts[1]})
-			}
+			nodes = append(nodes, Node{Name: parts[1]})
 		}
 	}
 
