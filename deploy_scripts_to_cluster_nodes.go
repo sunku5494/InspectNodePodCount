@@ -96,11 +96,11 @@ func copyFilesToAllNodes() {
                 }{
                         {
                                 source: "node-pod-info.sh",
-                                destination: fmt.Sprintf("openshift-machine-config-operator/%s:/rootfs/%s", podName, "/usr/local/bin"),
+                                destination: fmt.Sprintf("openshift-machine-config-operator/%s:/rootfs/%s", podName, "usr/local/bin"),
                         },
                         {
                                 source: "node-pod-info.service",
-                                destination: fmt.Sprintf("openshift-machine-config-operator/%s:/rootfs/%s", podName, "/etc/systemd/system/"),
+                                destination: fmt.Sprintf("openshift-machine-config-operator/%s:/rootfs/%s", podName, "etc/systemd/system/"),
                         },
                 }
 

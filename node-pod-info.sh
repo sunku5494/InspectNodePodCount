@@ -38,12 +38,12 @@ while :; do
 		-o json | jq '[.items[] | select(.metadata.annotations["k8s.v1.cni.cncf.io/network-status"] | fromjson? | any(.default))] | length')
 
 	if [ "$POD_COUNT" -lt "$ALLOCATED_IPS" ]; then
-		echo "ERROR: $(date '+%Y-%m-%d %H:%M:%S') - POD COUNT is less than the POD IPs Allocated. A few stale IPv4 files could be existing in the ${CNI_NETWORK_DIR}"
+		echo "ERROR: $(date '+%Y-%m-%d %H:%M:%S') - POD COUNT is less than the IP files created in SDN Directory. A few stale IPv4 files could be existing in the ${CNI_NETWORK_DIR}. Cross check if you find those IP's allocated for pods through 'oc get pods' command. This is a problem. Collect SDN Directory Content and SOS, Must gather reports"
 	elif [ "$POD_COUNT" -gt "$ALLOCATED_IPS" ]; then
-		echo "ERROR: $(date '+%Y-%m-%d %H:%M:%S') - POD COUNT is greater than the POD IPs Allocated"
+		echo "ERROR: $(date '+%Y-%m-%d %H:%M:%S') - POD COUNT is greater than the IP files created in the SDN Directory. IP addresses may need to get allocate for a few pods"
 	else
-		echo "INFO: $(date '+%Y-%m-%d %H:%M:%S') - POD and POD IP Count are same"
+		echo "INFO: $(date '+%Y-%m-%d %H:%M:%S') - POD and IP files in SDN Directory count are same. Looks Good!!"
 	fi
-	echo "INFO: $(date '+%Y-%m-%d %H:%M:%S') - POD COUNT: ${POD_COUNT} and PODIPs COUNT: ${ALLOCATED_IPS}"
+	echo "INFO: $(date '+%Y-%m-%d %H:%M:%S') - Pod count is : ${POD_COUNT} and IP files in SDN Directory COUNT is : ${ALLOCATED_IPS}"
 	sleep 3600
 done

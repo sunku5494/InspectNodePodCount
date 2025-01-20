@@ -25,9 +25,9 @@ Step 4 : Login to one of the node using the command "oc debug node/<nodeName>" a
 
 Step 5 : Check if node-pod-info service is created and running with the command "systemctl status node-pod-info.service"
 
-Step 6 : From your local machine and within the previously cloned git, Run the inspect service logs golang script using "go run inspect_node_pod_info_service_logs.go"
+Step 6 : From your local machine and within the previously cloned git path, Run the inspect service logs golang script using "go run inspect_node_pod_info_service_logs.go" (script would outputs the node names where ERROR logs have detected)
 
-Step 7 : If the script finds any Error log with in a node,
+Step 7 : Execute the below commands
         i.  Login to the node using "oc debug node/<node-name>"
        ii.  Run a command "journalctl -u node-pod-info.service" to check logs of deployed service       
       iii.  Collect the output of the command "ls -lrt /var/lib/cni/networks/openshift-SDN"
