@@ -27,16 +27,18 @@ trap cleanup TERM
 while :; do
 	#Counting the list of ipv4 files created in $CNI_NETWORK_DIR
 	CNI_NETWORK_DIR="/var/lib/cni/networks/openshift-sdn"
+	#Finds and Counts the files named with ipv4 address. e.g: 10.0.0.1
 	ALLOCATED_IPS=$(find $CNI_NETWORK_DIR -type f -regextype posix-extended -regex '.*/([0-9]{1,3}\.){3}[0-9]{1,3}$' | wc -l)
+	NODE_NAME=$(hostname -f) #Fetches complete fqdn of a node
 
 	#Counting the pods in a worker node that are attached to the cluster's default network, status is running
 	#and have an IP address assigned to them
 	POD_COUNT=$(oc --kubeconfig=/var/lib/kubelet/kubeconfig get pods -A \
-		--field-selector spec.nodeName="$(hostname)",status.podIP!=null,status.phase="Running" \
+		--field-selector spec.nodeName=${NODE_NAME},status.podIP!=null,status.phase="Running" \
 		-o json | jq '[.items[] | select(.metadata.annotations["k8s.v1.cni.cncf.io/network-status"] | fromjson? | any(.default))] | length')
 
 	if [ "$POD_COUNT" -lt "$ALLOCATED_IPS" ]; then
-		echo "ERROR: $(date '+%Y-%m-%d %H:%M:%S') - POD COUNT is less than the POD IPs Allocated. A few stale IPv4 files could be existing in the $(CNI_NETWORK_DIR)"
+		echo "ERROR: $(date '+%Y-%m-%d %H:%M:%S') - POD COUNT is less than the POD IPs Allocated. A few stale IPv4 files could be existing in the ${CNI_NETWORK_DIR}"
 	elif [ "$POD_COUNT" -gt "$ALLOCATED_IPS" ]; then
 		echo "ERROR: $(date '+%Y-%m-%d %H:%M:%S') - POD COUNT is greater than the POD IPs Allocated"
 	else
