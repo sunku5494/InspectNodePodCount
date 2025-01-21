@@ -17,7 +17,7 @@
 
 # Function to handle cleanup on termination
 cleanup() {
-	echo "ERROR: Received SIGTERM. Exiting gracefully at $(date '+%Y-%m-%d %H:%M:%S')."
+	echo "FATAL: Received SIGTERM. Exiting gracefully at $(date '+%Y-%m-%d %H:%M:%S')."
 	exit 0
 }
 
@@ -40,7 +40,7 @@ while :; do
 	if [ "$POD_COUNT" -lt "$ALLOCATED_IPS" ]; then
 		echo "ERROR: $(date '+%Y-%m-%d %H:%M:%S') - POD COUNT is less than the IP files created in SDN Directory. A few stale IPv4 files could be existing in the ${CNI_NETWORK_DIR}. Cross check if you find those IP's allocated for pods through 'oc get pods' command. This is a problem. Collect SDN Directory Content and SOS, Must gather reports"
 	elif [ "$POD_COUNT" -gt "$ALLOCATED_IPS" ]; then
-		echo "ERROR: $(date '+%Y-%m-%d %H:%M:%S') - POD COUNT is greater than the IP files created in the SDN Directory. IP addresses may need to get allocate for a few pods"
+		echo "WARNING: $(date '+%Y-%m-%d %H:%M:%S') - POD COUNT is greater than the IP files created in the SDN Directory. IP addresses may need to get allocate for a few pods"
 	else
 		echo "INFO: $(date '+%Y-%m-%d %H:%M:%S') - POD and IP files in SDN Directory count are same. Looks Good!!"
 	fi
