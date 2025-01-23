@@ -1,10 +1,7 @@
+// inspect_node_pod_info_service_logs.go
+// In an Openshift cluster, this script would loop through a list of nodes, check the node-pod-info service logs installed on 
+// those nodes for ERROR logs, and output the node name if detects any ERROR logs.
 package main
-
-/*
-Description:
-In an Openshift cluster, this script would loop through a list of nodes, check the node-pod-info service logs installed on 
-those nodes for ERROR logs, and output the node name if any ERROR logs were detected.
-*/
 
 import (
 	"bytes"

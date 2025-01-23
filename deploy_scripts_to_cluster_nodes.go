@@ -1,3 +1,5 @@
+// deploy_scripts_to_cluster_nodes.go
+// This file can copy the files defined, start service defined and it can also perform the cleanup of services and files copied in all the cluster nodes.
 package main
 
 import (
