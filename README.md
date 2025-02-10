@@ -23,7 +23,7 @@ Step 6 : From your local machine and within the previously cloned git path, Run 
 Step 7 : Execute the below commands
         i.  Login to the node using "oc debug node/<node-name>"
        ii.  Run a command "journalctl -u node-pod-info.service" to check logs of deployed service       
-      iii.  Collect the output of the command "ls -lrt /var/lib/cni/networks/openshift-SDN"
+      iii.  Zip the whole directory "/var/lib/cni/" and ensure Zip file includes files and directories, from all subdirectories within "/var/lib/cni/"
        iv.  Generate must-gather and sos reports. Here are the links help creating must-gather and sos reports
              https://docs.redhat.com/en/documentation/openshift_container_platform/4.17/html/support/gathering-cluster-data#support_gathering_data_gathering-cluster-data 
              https://access.redhat.com/solutions/5065411
